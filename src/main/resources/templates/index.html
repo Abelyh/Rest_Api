@@ -611,7 +611,7 @@
     // Загрузить роли для селектов
     async function loadRoles() {
         try {
-            allRoles = await apiRequest('/api/v1/admin/roles');
+            allRoles = await apiRequest('/api/v1/roles');
 
             const roleSelects = ['roleSelect', 'selectRole'];
             roleSelects.forEach(selectId => {

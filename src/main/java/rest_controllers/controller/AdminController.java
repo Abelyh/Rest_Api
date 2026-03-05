@@ -15,11 +15,9 @@ import java.util.List;
 public class AdminController {
 
     private final UserService userService;
-    private final RoleService roleService;
 
-    public AdminController(UserService userService, RoleService roleService) {
+    public AdminController(UserService userService) {
         this.userService = userService;
-        this.roleService = roleService;
     }
 
     @GetMapping("/users")
@@ -46,10 +44,6 @@ public class AdminController {
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-    @GetMapping("/roles")
-    public ResponseEntity<List<RoleResponseDto>> getRoles() {
-        return ResponseEntity.ok(roleService.findAll());
     }
 
 }
