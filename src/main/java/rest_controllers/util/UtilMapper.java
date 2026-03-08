@@ -14,41 +14,41 @@ import java.util.Set;
  вспомогательный класс для реализации обновления юзера, чтобы в сервисном классе update метод не был таким громоздким
  */
 @Component
-public class UtilUpdate {
+public class UtilMapper {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
 
-    public UtilUpdate(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public UtilMapper(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User updateFromDto(User userById, UserRequestDto requestDto) {
+    public User updateFromDto(User user, UserRequestDto requestDto) {
 
         if (requestDto.getFirstName() != null) {
-            userById.setFirstName(requestDto.getFirstName());
+            user.setFirstName(requestDto.getFirstName());
         }
         if (requestDto.getLastName() != null) {
-            userById.setLastName(requestDto.getLastName());
+            user.setLastName(requestDto.getLastName());
         }
         if (requestDto.getAge() != null) {
-            userById.setAge(requestDto.getAge());
+            user.setAge(requestDto.getAge());
         }
-        if (requestDto.getEmail() != null && !requestDto.getEmail().equals(userById.getEmail())) {
+        if (requestDto.getEmail() != null && !requestDto.getEmail().equals(user.getEmail())) {
             if (!userRepository.existsByEmail(requestDto.getEmail())) {
-                userById.setEmail(requestDto.getEmail());
+                user.setEmail(requestDto.getEmail());
             }
         }
         if (requestDto.getPassword() != null && !requestDto.getPassword().isEmpty()) {
-            userById.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+            user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         }
         if (requestDto.getRoleIds() != null && !requestDto.getRoleIds().isEmpty()) {
             Set<Role> allById = roleService.findAllById(requestDto.getRoleIds());
-            userById.setRoles(allById);
+            user.setRoles(allById);
         }
-        return userById;
+        return user;
     }
 }

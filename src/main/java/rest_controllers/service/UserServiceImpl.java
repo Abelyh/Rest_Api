@@ -10,7 +10,8 @@ import rest_controllers.dto.UserResponseDto;
 import rest_controllers.model.Role;
 import rest_controllers.model.User;
 import rest_controllers.repository.UserRepository;
-import rest_controllers.util.UtilUpdate;
+import rest_controllers.util.UtilMapper;
+
 
 import java.util.List;
 import java.util.Set;
@@ -22,51 +23,50 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
-    private final UtilUpdate utilUpdate;
+    private final UtilMapper utilMapper;
     private final ModelMapper modelMapper;
 
 
     public UserServiceImpl(UserRepository userRepository, RoleService roleService,
-                           PasswordEncoder passwordEncoder, UtilUpdate utilUpdate, ModelMapper modelMapper) {
+                           PasswordEncoder passwordEncoder, UtilMapper utilMapper, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
-        this.utilUpdate = utilUpdate;
+        this.utilMapper = utilMapper;
         this.modelMapper = modelMapper;
     }
 
     @Override
     @Transactional
     public UserResponseDto create(UserRequestDto requestDto, List<Long> roleIds) {
-        User user = convertToUser(requestDto);
+        User user = modelMapper.map(requestDto, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Set<Role> allById = roleService.findAllById(roleIds);
         user.setRoles(allById);
         userRepository.save(user);
-        return convertToDto(user);
+        return modelMapper.map(user, UserResponseDto.class);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<UserResponseDto> getAll() {
         List<User> all = userRepository.findAll();
-        return all.stream().map(this::convertToDto).collect(Collectors.toList());
+        return all.stream().map(user -> modelMapper.map(user, UserResponseDto.class)).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public UserResponseDto update(Long id, UserRequestDto requestDto) {
         User userById = findById(id);
-        User updateUser = utilUpdate.updateFromDto(userById, requestDto);
+        User updateUser = utilMapper.updateFromDto(userById, requestDto);
         User saveUser = userRepository.save(updateUser);
-        return convertToDto(saveUser);
+        return modelMapper.map(saveUser, UserResponseDto.class);
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        User userByEmail = findById(id);
-        userRepository.delete(userByEmail);
+       userRepository.findById(id).ifPresent(userRepository::delete);
     }
 
     @Override
@@ -79,15 +79,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserResponseDto getUserById(Long id) {
         User byId = findById(id);
-        return convertToDto(byId);
+        return modelMapper.map(byId, UserResponseDto.class);
     }
 
-    @Override
-    public UserResponseDto convertToDto(User user) {
-        return modelMapper.map(user, UserResponseDto.class);
-    }
-
-    public User convertToUser(UserRequestDto userRequestDto) {
-        return modelMapper.map(userRequestDto, User.class);
-    }
 }

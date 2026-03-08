@@ -2,7 +2,6 @@ package rest_controllers.service;
 
 import rest_controllers.dto.UserRequestDto;
 import rest_controllers.dto.UserResponseDto;
-import rest_controllers.model.Role;
 import rest_controllers.model.User;
 
 import java.util.List;
@@ -21,7 +20,5 @@ public interface UserService {
     User findById(Long id);
 
     UserResponseDto getUserById(Long id);
-
-    UserResponseDto convertToDto(User user);
 
 }
