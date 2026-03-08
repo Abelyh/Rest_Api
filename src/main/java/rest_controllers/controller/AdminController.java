@@ -2,10 +2,8 @@ package rest_controllers.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rest_controllers.dto.RoleResponseDto;
 import rest_controllers.dto.UserRequestDto;
 import rest_controllers.dto.UserResponseDto;
-import rest_controllers.service.RoleService;
 import rest_controllers.service.UserService;
 
 import java.util.List;
@@ -32,7 +30,7 @@ public class AdminController {
 
     @PostMapping("/users")
     public ResponseEntity<UserResponseDto> createUserAccount(@RequestBody UserRequestDto requestDto) {
-        return ResponseEntity.ok(userService.create(requestDto, requestDto.getRoleIds()));
+        return ResponseEntity.ok(userService.create(requestDto));
     }
 
     @PutMapping("/users/{id}")

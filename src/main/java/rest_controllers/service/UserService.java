@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface UserService {
 
-    UserResponseDto create(UserRequestDto requestDto, List<Long> roleIds);
+    UserResponseDto create(UserRequestDto requestDto);
 
     List<UserResponseDto> getAll();
 

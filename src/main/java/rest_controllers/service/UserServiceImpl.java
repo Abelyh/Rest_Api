@@ -38,9 +38,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserResponseDto create(UserRequestDto requestDto, List<Long> roleIds) {
+    public UserResponseDto create(UserRequestDto requestDto) {
         User user = modelMapper.map(requestDto, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        List<Long> roleIds = requestDto.getRoleIds();
         Set<Role> allById = roleService.findAllById(roleIds);
         user.setRoles(allById);
         userRepository.save(user);
